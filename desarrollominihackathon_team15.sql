@@ -1,30 +1,43 @@
-DROP database desarrollominihackathon_team15;
+/* eliminamos la base de datos */
+USE master;
+DROP DATABASE desarrollominihackathon_team15
+IF EXISTS (SELECT name FROM sys.databases WHERE name = 'desarrollominihackathon_team15')
+
 /* Creamos la base de datos */
 CREATE DATABASE  desarrollominihackathon_team15;
+USE desarrollominihackathon_team15;
 
-USE desarrollominihackathon_team15
-GO
+/* Eliminar tabla existente */
+DROP TABLE IF EXISTS client;
 
-/* Tabla client */
+/* Crear tabla client */
 CREATE TABLE client (
   id INT IDENTITY(1,1) PRIMARY KEY,
   names VARCHAR(100),
-  dni VARCHAR(8) CHECK (dni like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
-  cell CHAR(9) CHECK (cell like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
-  adress VARCHAR(80),
+  dni CHAR(8),
+  cell CHAR(9),
+  addres VARCHAR(80),
   department VARCHAR(80),
   province VARCHAR(80),
   district VARCHAR(80)
 );
 
-ALTER TABLE client
-	ADD constraint DNI_UNICO_client UNIQUE(dni);
-
 /* Restricciones para dia/mes/año */
 SET DATEFORMAT ymd;
 
+/* Restricciones */
+ALTER TABLE client
+    ADD CONSTRAINT CK_DNILength_client CHECK (dni LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]');
+
+ALTER TABLE client
+    ADD CONSTRAINT CK_CellLength_client CHECK (cell LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]');
+
+ALTER TABLE client
+	ADD CONSTRAINT CK_DNIUnique_client UNIQUE (dni);
+
+
 /* Registros */
-INSERT INTO client (names, dni, cell, adress, department, province, district)
+INSERT INTO client (names, dni, cell, addres, department, province, district)
 VALUES
   ('John Doe', '12345678', '923456789', '123 Main St', 'Department 1', 'Province 1', 'District 1'),
   ('Jane Smith', '87654321', '987654321', '456 Elm St', 'Department 2', 'Province 2', 'District 2'),
@@ -57,19 +70,26 @@ CREATE TABLE sucursal (
   id INT IDENTITY(1,1) PRIMARY KEY,
   names VARCHAR(60),
   last_name VARCHAR(60),
-  dni CHAR(8) CHECK (dni like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
-  cell CHAR(9) CHECK (cell like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
-  states CHAR(1) NULL CHECK(states ='A' OR states ='I') default 'A',
+  dni CHAR(8) NOT NULL,
+  cell CHAR(9) NOT NULL,
+  states CHAR(1) NULL CHECK(states ='A' OR states ='I') default 'A'
 );
 
+/* Restricciones */
 ALTER TABLE sucursal
-	ADD constraint DNI_UNICO_sucursal UNIQUE(dni);
+	ADD CONSTRAINT CK_DNILength_sucursal CHECK (dni LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]');
+
+ALTER TABLE sucursal
+    ADD CONSTRAINT CK_CellLength_sucursal CHECK (cell LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]');
+
+ALTER TABLE sucursal
+	ADD CONSTRAINT CK_DNIUnique_sucursal UNIQUE (dni);
 
 /* Registros */
 INSERT INTO sucursal (names, last_name, dni, cell)
 VALUES
   ('John', 'Doe', '12345678', '923456789'),
-  ('Jane', 'Smith', '87654321', '976543219'),
+  ('Jane', 'Smith', '87654321', '976543241'),
   ('Michael', 'Johnson', '45678912', '987654321'),
   ('Emily', 'Davis', '98765432', '923456789'),
   ('David', 'Wilson', '34567891', '987654321'),
@@ -81,18 +101,26 @@ VALUES
 
 SELECT * FROM sucursal;
 
+
 /* Tabla Seller */
 CREATE TABLE Seller (
   id INT IDENTITY(1,1) PRIMARY KEY,
   names VARCHAR(60),
   last_name VARCHAR(60),
-  dni CHAR (8) CHECK (dni like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
-  cell CHAR (9) CHECK (cell like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
+  dni CHAR (8),
+  cell CHAR (9),
   states CHAR(1) NULL CHECK(states ='A' OR states ='I') default 'A',
 );
 
+/* Restricciones */
 ALTER TABLE Seller
-	ADD constraint DNI_UNICO_seller UNIQUE(dni);
+	ADD CONSTRAINT CK_DNILength_Seller CHECK (dni LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]');
+
+ALTER TABLE sucursal
+    ADD CONSTRAINT CK_CellLength_Seller CHECK (cell LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]');
+
+ALTER TABLE sucursal
+	ADD CONSTRAINT CK_DNIUnique_Seller UNIQUE (dni);
 
 /* Registros */
 INSERT INTO Seller (names, last_name, dni, cell)
@@ -116,14 +144,20 @@ CREATE TABLE Dispatcher (
   id INT IDENTITY(1,1) PRIMARY KEY,
   names VARCHAR(60),
   last_name VARCHAR(60),
-  dni CHAR (8) CHECK (dni like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
-  cell CHAR (9) CHECK (cell like '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
+  dni CHAR (8),
+  cell CHAR (9),
   states CHAR(1) NULL CHECK(states ='A' OR states ='I') default 'A',
 );
 
+/* Restricciones */
 ALTER TABLE Dispatcher
-	ADD constraint DNI_UNICO_dispatcher UNIQUE(dni);
+	ADD CONSTRAINT CK_DNILength_Dispatcher CHECK (dni LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]');
 
+ALTER TABLE Dispatcher
+    ADD CONSTRAINT CK_CellLength_Dispatcher CHECK (cell LIKE '[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]');
+
+ALTER TABLE Dispatcher
+	ADD CONSTRAINT CK_DNIUnique_Dispatcher UNIQUE (dni);
 /* Registros */
 INSERT INTO Dispatcher (names, last_name, dni, cell)
 VALUES
@@ -153,18 +187,20 @@ CREATE TABLE Products (
 /* Registros */
 INSERT INTO Products (names, price, descriptions, stock)
 VALUES
-('Product 1', '10', 'Description 1', '100'),
-('Product 2', '20', 'Description 2', '50'),
-('Product 3', '15', 'Description 3', '80'),
+('Product 1', '10.50', 'Description 1', '100'),
+('Product 2', '20.75', 'Description 2', '50'),
+('Product 3', '15.00', 'Description 3', '80'),
 ('Product 4', '5.99', 'Description 4', '200'),
-('Product 5', '12', 'Description 5', '150'),
+('Product 5', '12.50', 'Description 5', '150'),
 ('Product 6', '8.99', 'Description 6', '120'),
-('Product 7', '19', 'Description 7', '90'),
+('Product 7', '19.99', 'Description 7', '90'),
 ('Product 8', '14.50', 'Description 8', '110'),
 ('Product 9', '9.75', 'Description 9', '70'),
 ('Product 10', '6.99', 'Description 10', '180');
 
+
 SELECT * FROM Products;
+
 
 /* Relaciones */
 -- Relación entre client y sucursal (Un jefe de sucursal puede tener varias sucursales)
